@@ -1,18 +1,25 @@
+import { JsonRpcBatchProvider } from "@ethersproject/providers";
 import { ethers } from "hardhat";
+import credentialsSchema from "../credentials-src/examplecredentialschema.json"; //Import custom credentials schema
 
 async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const ONE_YEAR_IN_SECS = 365 * 24 * 60 * 60;
-  const unlockTime = currentTimestampInSeconds + ONE_YEAR_IN_SECS;
+  
 
-  const lockedAmount = ethers.utils.parseEther("1");
-
-  const Lock = await ethers.getContractFactory("Lock");
-  const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
-
-  await lock.deployed();
-
-  console.log("Lock with 1 ETH deployed to:", lock.address);
+  //credentials DB deployment
+  const CredentialsDB = await ethers.getContractFactory("CredentialsDB")
+  const schemaJsonString = JSON.stringify(credentialsSchema)
+  const credentialsDB = await CredentialsDB.deploy(schemaJsonString)
+  
+  await credentialsDB.deployed();
+  console.log("success credentialsDB.sol deployment")
+  const owner = await credentialsDB.owner()
+  const address = await credentialsDB.address
+  const readCredentialsSchema = await credentialsDB.credentialsSchema()
+  console.log("Owner: " + owner)
+  console.log("Contract address:" + address)
+  console.log("Credentials schema: ")
+  console.log(JSON.parse(readCredentialsSchema))
+ 
 }
 
 // We recommend this pattern to be able to use async/await everywhere

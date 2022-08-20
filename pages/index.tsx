@@ -87,7 +87,7 @@ const Home: NextPage = () => {
         </div>
       </header>
       <main className={styles.main}>
-          {isIssuer?<Issuer credentialsDB={credentialsDB}></Issuer>:<h1>ZK Credentials DB</h1>}
+          {isIssuer?<Issuer walletAddress={walletAddress} credentialsDB={credentialsDB}></Issuer>:<h1>ZK Credentials DB</h1>}
       </main>
     </div>
   )

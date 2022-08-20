@@ -7,6 +7,9 @@ import "hardhat/console.sol";//to erase
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract CredentialsDB is Ownable{
+    //Events
+    event CredentialIssued(uint32 credentialNo);
+
     //JSON credentials schema
     string public credentialsSchema;
     
@@ -20,6 +23,9 @@ contract CredentialsDB is Ownable{
     function saveCredential(string calldata data) public onlyOwner(){
         credentialsRegister[credentialsCounter] = data;
         credentialsCounter ++;
+        
+        //emit new credential event
+        emit CredentialIssued(credentialsCounter);
     }
 
     function viewArray(uint i) public view returns (string memory){

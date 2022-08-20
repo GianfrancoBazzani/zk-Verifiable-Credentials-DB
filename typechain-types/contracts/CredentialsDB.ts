@@ -109,11 +109,24 @@ export interface CredentialsDBInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "viewArray", data: BytesLike): Result;
 
   events: {
+    "CredentialIssued(uint32)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "CredentialIssued"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
 }
+
+export interface CredentialIssuedEventObject {
+  credentialNo: number;
+}
+export type CredentialIssuedEvent = TypedEvent<
+  [number],
+  CredentialIssuedEventObject
+>;
+
+export type CredentialIssuedEventFilter =
+  TypedEventFilter<CredentialIssuedEvent>;
 
 export interface OwnershipTransferredEventObject {
   previousOwner: string;
@@ -246,6 +259,11 @@ export interface CredentialsDB extends BaseContract {
   };
 
   filters: {
+    "CredentialIssued(uint32)"(
+      credentialNo?: null
+    ): CredentialIssuedEventFilter;
+    CredentialIssued(credentialNo?: null): CredentialIssuedEventFilter;
+
     "OwnershipTransferred(address,address)"(
       previousOwner?: PromiseOrValue<string> | null,
       newOwner?: PromiseOrValue<string> | null

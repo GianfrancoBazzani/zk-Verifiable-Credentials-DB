@@ -74,8 +74,8 @@
       ]
     },
     "/home/pc/Desktop/zk-Verifiable-Credentials-DB/contracts/CredentialsDB.sol": {
-      "lastModificationDate": 1660983076600,
-      "contentHash": "918e4e1ffe7ae8a865aebc1637ff536f",
+      "lastModificationDate": 1661019307062,
+      "contentHash": "b9e7e78ada3815ac2ffb9dcbce543f36",
       "sourceName": "contracts/CredentialsDB.sol",
       "solcConfig": {
         "version": "0.8.9",
@@ -102,7 +102,8 @@
       },
       "imports": [
         "hardhat/console.sol",
-        "@openzeppelin/contracts/access/Ownable.sol"
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "@zk-kit/incremental-merkle-tree.sol/IncrementalBinaryTree.sol"
       ],
       "versionPragmas": [
         "^0.8.9"
@@ -181,6 +182,79 @@
       ],
       "artifacts": [
         "Context"
+      ]
+    },
+    "/home/pc/Desktop/zk-Verifiable-Credentials-DB/node_modules/@zk-kit/incremental-merkle-tree.sol/IncrementalBinaryTree.sol": {
+      "lastModificationDate": 1660992025949,
+      "contentHash": "919407f122863289094985cd15d31a1c",
+      "sourceName": "@zk-kit/incremental-merkle-tree.sol/IncrementalBinaryTree.sol",
+      "solcConfig": {
+        "version": "0.8.9",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./Hashes.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.4"
+      ],
+      "artifacts": [
+        "IncrementalBinaryTree"
+      ]
+    },
+    "/home/pc/Desktop/zk-Verifiable-Credentials-DB/node_modules/@zk-kit/incremental-merkle-tree.sol/Hashes.sol": {
+      "lastModificationDate": 1660992025949,
+      "contentHash": "5608c306e4611be06d045d9399f44a58",
+      "sourceName": "@zk-kit/incremental-merkle-tree.sol/Hashes.sol",
+      "solcConfig": {
+        "version": "0.8.9",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.4"
+      ],
+      "artifacts": [
+        "PoseidonT3",
+        "PoseidonT6"
       ]
     }
   }

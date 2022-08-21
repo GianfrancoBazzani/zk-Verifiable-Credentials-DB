@@ -32,10 +32,14 @@ export interface CredentialsDBInterface extends utils.Interface {
     "credentialsCounter()": FunctionFragment;
     "credentialsRegister(uint256)": FunctionFragment;
     "credentialsSchema()": FunctionFragment;
+    "credentialsSchemaSet()": FunctionFragment;
+    "insertLeaf(uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "saveCredential(string)": FunctionFragment;
+    "setCredentialsSchema(string)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "tree()": FunctionFragment;
     "viewArray(uint256)": FunctionFragment;
   };
 
@@ -44,10 +48,14 @@ export interface CredentialsDBInterface extends utils.Interface {
       | "credentialsCounter"
       | "credentialsRegister"
       | "credentialsSchema"
+      | "credentialsSchemaSet"
+      | "insertLeaf"
       | "owner"
       | "renounceOwnership"
       | "saveCredential"
+      | "setCredentialsSchema"
       | "transferOwnership"
+      | "tree"
       | "viewArray"
   ): FunctionFragment;
 
@@ -63,6 +71,14 @@ export interface CredentialsDBInterface extends utils.Interface {
     functionFragment: "credentialsSchema",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "credentialsSchemaSet",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "insertLeaf",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
@@ -73,9 +89,14 @@ export interface CredentialsDBInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
+    functionFragment: "setCredentialsSchema",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
   ): string;
+  encodeFunctionData(functionFragment: "tree", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "viewArray",
     values: [PromiseOrValue<BigNumberish>]
@@ -93,6 +114,11 @@ export interface CredentialsDBInterface extends utils.Interface {
     functionFragment: "credentialsSchema",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "credentialsSchemaSet",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "insertLeaf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
@@ -103,30 +129,48 @@ export interface CredentialsDBInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setCredentialsSchema",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "tree", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "viewArray", data: BytesLike): Result;
 
   events: {
-    "CredentialIssued(uint32)": EventFragment;
+    "CredentialSavedInRegister(uint32)": EventFragment;
+    "LeafInserted(uint256,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "CredentialIssued"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "CredentialSavedInRegister"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "LeafInserted"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
 }
 
-export interface CredentialIssuedEventObject {
+export interface CredentialSavedInRegisterEventObject {
   credentialNo: number;
 }
-export type CredentialIssuedEvent = TypedEvent<
+export type CredentialSavedInRegisterEvent = TypedEvent<
   [number],
-  CredentialIssuedEventObject
+  CredentialSavedInRegisterEventObject
 >;
 
-export type CredentialIssuedEventFilter =
-  TypedEventFilter<CredentialIssuedEvent>;
+export type CredentialSavedInRegisterEventFilter =
+  TypedEventFilter<CredentialSavedInRegisterEvent>;
+
+export interface LeafInsertedEventObject {
+  leaf: BigNumber;
+  root: BigNumber;
+}
+export type LeafInsertedEvent = TypedEvent<
+  [BigNumber, BigNumber],
+  LeafInsertedEventObject
+>;
+
+export type LeafInsertedEventFilter = TypedEventFilter<LeafInsertedEvent>;
 
 export interface OwnershipTransferredEventObject {
   previousOwner: string;
@@ -176,6 +220,13 @@ export interface CredentialsDB extends BaseContract {
 
     credentialsSchema(overrides?: CallOverrides): Promise<[string]>;
 
+    credentialsSchemaSet(overrides?: CallOverrides): Promise<[boolean]>;
+
+    insertLeaf(
+      leaf: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     renounceOwnership(
@@ -187,10 +238,25 @@ export interface CredentialsDB extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    setCredentialsSchema(
+      schema: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     transferOwnership(
       newOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    tree(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber] & {
+        depth: BigNumber;
+        root: BigNumber;
+        numberOfLeaves: BigNumber;
+      }
+    >;
 
     viewArray(
       i: PromiseOrValue<BigNumberish>,
@@ -207,6 +273,13 @@ export interface CredentialsDB extends BaseContract {
 
   credentialsSchema(overrides?: CallOverrides): Promise<string>;
 
+  credentialsSchemaSet(overrides?: CallOverrides): Promise<boolean>;
+
+  insertLeaf(
+    leaf: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   owner(overrides?: CallOverrides): Promise<string>;
 
   renounceOwnership(
@@ -218,10 +291,25 @@ export interface CredentialsDB extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  setCredentialsSchema(
+    schema: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   transferOwnership(
     newOwner: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  tree(
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber] & {
+      depth: BigNumber;
+      root: BigNumber;
+      numberOfLeaves: BigNumber;
+    }
+  >;
 
   viewArray(
     i: PromiseOrValue<BigNumberish>,
@@ -238,6 +326,13 @@ export interface CredentialsDB extends BaseContract {
 
     credentialsSchema(overrides?: CallOverrides): Promise<string>;
 
+    credentialsSchemaSet(overrides?: CallOverrides): Promise<boolean>;
+
+    insertLeaf(
+      leaf: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     owner(overrides?: CallOverrides): Promise<string>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
@@ -247,10 +342,25 @@ export interface CredentialsDB extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    setCredentialsSchema(
+      schema: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     transferOwnership(
       newOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    tree(
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber] & {
+        depth: BigNumber;
+        root: BigNumber;
+        numberOfLeaves: BigNumber;
+      }
+    >;
 
     viewArray(
       i: PromiseOrValue<BigNumberish>,
@@ -259,10 +369,18 @@ export interface CredentialsDB extends BaseContract {
   };
 
   filters: {
-    "CredentialIssued(uint32)"(
+    "CredentialSavedInRegister(uint32)"(
       credentialNo?: null
-    ): CredentialIssuedEventFilter;
-    CredentialIssued(credentialNo?: null): CredentialIssuedEventFilter;
+    ): CredentialSavedInRegisterEventFilter;
+    CredentialSavedInRegister(
+      credentialNo?: null
+    ): CredentialSavedInRegisterEventFilter;
+
+    "LeafInserted(uint256,uint256)"(
+      leaf?: null,
+      root?: null
+    ): LeafInsertedEventFilter;
+    LeafInserted(leaf?: null, root?: null): LeafInsertedEventFilter;
 
     "OwnershipTransferred(address,address)"(
       previousOwner?: PromiseOrValue<string> | null,
@@ -284,6 +402,13 @@ export interface CredentialsDB extends BaseContract {
 
     credentialsSchema(overrides?: CallOverrides): Promise<BigNumber>;
 
+    credentialsSchemaSet(overrides?: CallOverrides): Promise<BigNumber>;
+
+    insertLeaf(
+      leaf: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     renounceOwnership(
@@ -295,10 +420,17 @@ export interface CredentialsDB extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    setCredentialsSchema(
+      schema: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     transferOwnership(
       newOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    tree(overrides?: CallOverrides): Promise<BigNumber>;
 
     viewArray(
       i: PromiseOrValue<BigNumberish>,
@@ -318,6 +450,15 @@ export interface CredentialsDB extends BaseContract {
 
     credentialsSchema(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    credentialsSchemaSet(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    insertLeaf(
+      leaf: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     renounceOwnership(
@@ -329,10 +470,17 @@ export interface CredentialsDB extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    setCredentialsSchema(
+      schema: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     transferOwnership(
       newOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    tree(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     viewArray(
       i: PromiseOrValue<BigNumberish>,

@@ -3,8 +3,12 @@
 }
 
 .main {
-  min-height: 50rem;
-  margin: 1rem
+  min-height: 15rem;
+  margin: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .footer {
@@ -133,7 +137,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 550px;
+  width: 600px;
   border-radius: 12px;
   margin: 2rem;
   padding: 1.2rem;
@@ -194,4 +198,32 @@
   width: 20px;
   height: 20px;
   margin-left: 1rem;
+}
+
+.userSelection{
+  margin: 1rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.userSelection button{
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+.credNumberIn{
+  margin: 0.3rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.credNumberIn input{
+  margin-left: 0.3rem;
+}
+.credNumberIn p{
+  margin: 0.3rem;
 }

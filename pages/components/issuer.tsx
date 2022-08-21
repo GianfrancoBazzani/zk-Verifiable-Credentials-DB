@@ -3,6 +3,8 @@ import styles from '../../styles/Home.module.css'
 import {Contract, ethers, Signer} from 'ethers'
 import {decrypt, encrypt} from '@metamask/eth-sig-util'
 import { isGeneratorFunction } from 'util/types';
+import {poseidon} from "circomlibjs"
+import { throws } from 'assert';
 
 
 
@@ -25,20 +27,6 @@ async function readSchemaClaims(contract: Contract | undefined){
         const claimsArray = readCredentialsSchemaJSON.schema_json.claims
         
         return claimsArray
-    }
-}
-
-//get public key from MetaMask. this function do not goes here, goes in subject portal
-async function getPubKeyFromMM(walletAddress: string){
-    if(window.ethereum){
-    const keyB64 = await window.ethereum.request!({
-        method: 'eth_getEncryptionPublicKey',
-        params: [walletAddress]
-    }) as string;
-    //if you want base 64 encoded
-    return keyB64
-    //if you want the decoded form bytes32 like
-    //return ethers.utils.base64.decode(keyB64)
     }
 }
 
@@ -66,7 +54,66 @@ async function uploadEncryptedCredentialToContract(encCredential: string, contra
     
 }
 
-//upload encypted data to contract.
+//convert ascii to hex
+function ascii_to_hex(str: string)
+  {
+	var arr1 = ["0x"];
+	for (var n = 0, l = str.length; n < l; n ++) 
+     {
+		var hex = Number(str.charCodeAt(n)).toString(16);
+		arr1.push(hex);
+	 }
+	return arr1.join('');
+   }
+
+//compute merkle leave from Credential
+function computeLeave(credentialJSON:{"claims":{ [x: string]: string; }}, claimsArray: [string] | undefined){
+    if(credentialJSON.claims.ethAddress){
+        if(claimsArray){
+            const ethAddress = credentialJSON.claims.ethAddress
+            //claim values are type string, has to be converted to ascii bytes like(Address is not converted)
+            let convertedArrayHex:string[]=[];
+
+            for(let i in claimsArray){
+                if(claimsArray[i] !== "ethAddress"){
+                    convertedArrayHex.push(ascii_to_hex(credentialJSON.claims[claimsArray[i]]))
+                } else {
+                    convertedArrayHex.push(credentialJSON.claims[claimsArray[i]])
+                }
+            }
+            
+            //compute CredentialHash
+            // @ts-ignore
+            var hashDigest = poseidon([convertedArrayHex[0],convertedArrayHex[1]])
+            if(claimsArray.length>2){
+                for(let i=2 ; i<claimsArray.length; i++){
+                   hashDigest = poseidon([hashDigest,convertedArrayHex[i]])
+                }
+            }
+            //hash CredentialHash and ethAddress
+            const leaf = poseidon([hashDigest,ethAddress])
+            return leaf
+        }
+    } else {
+        throw "ethAddress not found as atribute in credential JSON"
+    }
+}
+
+//insert leaf in merkle tree 
+async function insertLeaf(contract: Contract | undefined, leaf: string){
+    if(contract){
+        const tx = await contract.insertLeaf(leaf)
+        const txReceip = await tx.wait()
+        if(txReceip.status !== 1){
+            alert('error while inserting leaf on merkle tree onchain')
+            return
+        }
+    }
+    
+}
+
+/*functions to be transfered to user portal */
+//download encypted data to contract. this function do not goes here, goes in subject portal
 async function downloadEncryptedCredentialFromContract(index: number, contract: Contract | undefined){
     if(contract){
         const encCredential = await contract.saveCredential(index)
@@ -75,11 +122,21 @@ async function downloadEncryptedCredentialFromContract(index: number, contract: 
     
 }
 
-//download data array from contract.  this function do not goes here, goes in subject portal
+//get public key from MetaMask. this function do not goes here, goes in subject portal
+async function getPubKeyFromMM(walletAddress: string){
+    if(window.ethereum){
+    const keyB64 = await window.ethereum.request!({
+        method: 'eth_getEncryptionPublicKey',
+        params: [walletAddress]
+    }) as string;
+    //if you want base 64 encoded
+    return keyB64
+    //if you want the decoded form bytes32 like
+    //return ethers.utils.base64.decode(keyB64)
+    }
+}
 
-//find credential in array. this function do not goes here, goes in subject portal
-
-//asymetric decrytion with MetaMask
+//asymetric decrytion with MetaMask this function do not goes here, goes in subject portal
 async function decryptionWithMM(walletAddress: string, encCredential: string){
     if(window.ethereum){
         const dataHexLike = `0x${Buffer.from(encCredential,'utf-8').toString('hex')}`
@@ -161,7 +218,7 @@ export default class Issuer extends Component <{
                 {this.state.enIssueModal?
                     <div className={styles.modalBackground}>
                         <div className={styles.modalContainer}>
-                            <h3>Check claims and set subject eth address</h3> 
+                            <h3>Check claims and set subject eth public key</h3> 
                             <h4>Credential claims list</h4> 
                             {this.state.credentialJSON?<ul>{
                                 this.state.claimsArray.map((claimNames)=> {
@@ -189,15 +246,25 @@ export default class Issuer extends Component <{
 
                                 //CredentialIssued event catch
                                 if(this.props.credentialsDB){
-                                this.props.credentialsDB.on("CredentialIssued",(credentialNo) => {
-                                    console.log(`credential #${credentialNo} emited`)
-                                    this.setState((state)=> ({step2flag: true})) 
+                                this.props.credentialsDB.on("CredentialSavedInRegister",(credentialNo) => {
+                                    if(credentialNo === (this.state.credentialsCounter + 1)){
+                                        this.setState((state)=> ({step2flag: true}))
+                                    }
                                 })}
 
-                                //
-     
+                                //compute Merkle leave
+                                const leaf = computeLeave(this.state.credentialJSON, this.state.claimsArray)
+                                this.setState((state)=> ({step3flag: true}))
                                 
+                                //insert leaf on merkle tree on chain
+                                await insertLeaf(this.props.credentialsDB,leaf)
+                                    if(this.props.credentialsDB){
+                                    this.props.credentialsDB.on("LeafInserted",(eventleaf,root) =>{
+                                        if(eventleaf.toBigInt() === leaf){this.setState((state)=> ({step4flag: true}))}
+                                    })
+                                }
                                 
+
                                 }}>Confirm credential issuance</button>
                         </div>
                         {this.state.issuancePocInit?<div>

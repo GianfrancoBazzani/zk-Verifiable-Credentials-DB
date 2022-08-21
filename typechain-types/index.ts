@@ -3,11 +3,17 @@
 /* eslint-disable */
 import type * as openzeppelin from "./@openzeppelin";
 export type { openzeppelin };
+import type * as zkKit from "./@zk-kit";
+export type { zkKit };
 import type * as contracts from "./contracts";
 export type { contracts };
 export * as factories from "./factories";
 export type { Ownable } from "./@openzeppelin/contracts/access/Ownable";
 export { Ownable__factory } from "./factories/@openzeppelin/contracts/access/Ownable__factory";
+export type { PoseidonT3 } from "./@zk-kit/incremental-merkle-tree.sol/Hashes.sol/PoseidonT3";
+export { PoseidonT3__factory } from "./factories/@zk-kit/incremental-merkle-tree.sol/Hashes.sol/PoseidonT3__factory";
+export type { PoseidonT6 } from "./@zk-kit/incremental-merkle-tree.sol/Hashes.sol/PoseidonT6";
+export { PoseidonT6__factory } from "./factories/@zk-kit/incremental-merkle-tree.sol/Hashes.sol/PoseidonT6__factory";
 export type { CredentialsDB } from "./contracts/CredentialsDB";
 export { CredentialsDB__factory } from "./factories/contracts/CredentialsDB__factory";
 export type { Lock } from "./contracts/Lock";

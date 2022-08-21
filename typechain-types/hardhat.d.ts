@@ -17,6 +17,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Ownable__factory>;
     getContractFactory(
+      name: "PoseidonT3",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.PoseidonT3__factory>;
+    getContractFactory(
+      name: "PoseidonT6",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.PoseidonT6__factory>;
+    getContractFactory(
       name: "CredentialsDB",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.CredentialsDB__factory>;
@@ -30,6 +38,16 @@ declare module "hardhat/types/runtime" {
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Ownable>;
+    getContractAt(
+      name: "PoseidonT3",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.PoseidonT3>;
+    getContractAt(
+      name: "PoseidonT6",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.PoseidonT6>;
     getContractAt(
       name: "CredentialsDB",
       address: string,

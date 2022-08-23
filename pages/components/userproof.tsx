@@ -5,6 +5,7 @@ import {decrypt, encrypt} from '@metamask/eth-sig-util'
 import { isGeneratorFunction } from 'util/types';
 import {poseidon} from "circomlibjs"
 import { throws } from 'assert';
+import {IncrementalMerkleTree} from "@zk-kit/incremental-merkle-tree"
 
 
 /*functions to be transfered to user portal */
@@ -40,6 +41,11 @@ async function readSchemaClaims(contract: Contract | undefined){
         
         return claimsArray
     }
+}
+
+async function generateMerkleProof(contract: Contract | undefined, credentialNumber: number){ 
+    /*Reproduce On Chain tree*/
+    console.log("hola")
 }
 
 export default class UserProof extends Component <{
@@ -100,11 +106,10 @@ export default class UserProof extends Component <{
                     })}
                 <button onClick={()=>{
                     /*Proof generation */
-                    console.log(this.state.disclosureVector)}
+                    const merkleProof = generateMerkleProof(this.props.credentialsDB, this.state.credentialNumber)
+                    
             
-            
-            
-                }>Generate proof</button>
+                }}>Generate proof</button>
                 
             </div>:<div></div>}
         </div> 

@@ -1098,6 +1098,11 @@
   resolved "https://registry.npmjs.org/@zk-kit/incremental-merkle-tree.sol/-/incremental-merkle-tree.sol-1.2.0.tgz"
   integrity sha512-nTxw4gf41SlWEc3Y11X+ihDLs5fjvUzPLy8JvPofyM9O5tEKK5KCf5FEoPI8sqitctTTasjax925/qbT+aDJ+A==
 
+"@zk-kit/incremental-merkle-tree@^0.4.3":
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/@zk-kit/incremental-merkle-tree/-/incremental-merkle-tree-0.4.3.tgz#197f72102d35dd9c546a6a432896d6d6f6de05f4"
+  integrity sha512-2qHfrJXtPx8/UmF0wFAUr4VqCLr3J/P859fk/e3fwKLUnf3baeIUAO6inY4wrh0NGy4bzpKUWYjDph0yTbPz6A==
+
 abbrev@1:
   version "1.1.1"
   resolved "https://registry.npmjs.org/abbrev/-/abbrev-1.1.1.tgz"

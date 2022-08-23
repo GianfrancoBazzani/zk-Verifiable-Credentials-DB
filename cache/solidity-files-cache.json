@@ -74,8 +74,8 @@
       ]
     },
     "/home/pc/Desktop/zk-Verifiable-Credentials-DB/contracts/CredentialsDB.sol": {
-      "lastModificationDate": 1661019307062,
-      "contentHash": "b9e7e78ada3815ac2ffb9dcbce543f36",
+      "lastModificationDate": 1661282381813,
+      "contentHash": "2ff8835c891cb6ecb519b03bca34c4c5",
       "sourceName": "contracts/CredentialsDB.sol",
       "solcConfig": {
         "version": "0.8.9",

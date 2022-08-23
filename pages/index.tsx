@@ -118,13 +118,13 @@ const Home: NextPage = () => {
                     <div  className={styles.main}>
                       <h1>What you want to do?</h1>
                       <div className={styles.userSelection}>
-                        <button onClick={()=>{setUserSelection("proove")}}>Prove Your credential</button>
+                        <button onClick={()=>{setUserSelection("proove")}}>Prove your credential</button>
                         <button onClick={()=>{setUserSelection("verify")}}>Verify a proof</button>
                         <button onClick={async ()=>{
                           setUserSelection("getPubAdd")
                           const pubKey = await getPubKeyFromMM(walletAddress)
                           if(pubKey){setWalletPublicKey(pubKey)}
-                          }}>Get your public address</button>         
+                          }}>Get your public key</button>         
                       </div>
                     </div>
                   } [userSelection]

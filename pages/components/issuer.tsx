@@ -42,12 +42,12 @@ function encryptWithMM(publicKey: string, credential: {"claims":{ [x: string]: s
 }
 
 //upload encypted data to contract.
-async function uploadEncryptedCredentialToContract(encCredential: string, contract: Contract | undefined){
+async function uploadEncryptedCredentialAndLeafToContract(encCredential: string, contract: Contract | undefined, leaf: string){
     if(contract){
-        const tx = await contract.saveCredential(encCredential)
+        const tx = await contract.saveCredential(encCredential, leaf)
         const txReceip = await tx.wait()
         if(txReceip.status !== 1){
-            alert('error while uploading encrypted credential')
+            alert('error while uploading credential')
             return
         }
     }
@@ -97,19 +97,6 @@ function computeLeave(credentialJSON:{"claims":{ [x: string]: string; }}, claims
     } else {
         throw "ethAddress not found as atribute in credential JSON"
     }
-}
-
-//insert leaf in merkle tree 
-async function insertLeaf(contract: Contract | undefined, leaf: string){
-    if(contract){
-        const tx = await contract.insertLeaf(leaf)
-        const txReceip = await tx.wait()
-        if(txReceip.status !== 1){
-            alert('error while inserting leaf on merkle tree onchain')
-            return
-        }
-    }
-    
 }
 
 
@@ -203,29 +190,27 @@ export default class Issuer extends Component <{
                                 const enc = encryptWithMM(this.state.subjectEthPubKey,this.state.credentialJSON)
                                 this.setState((state)=> ({step1flag: true}))
                                 
-                                //credential upload
-                                await uploadEncryptedCredentialToContract(enc, this.props.credentialsDB)
+                                //compute Merkle leave
+                                const leaf = computeLeave(this.state.credentialJSON, this.state.claimsArray)
+                                this.setState((state)=> ({step3flag: true}))
+
+                                //Encrypted credential and leaf upload to contract
+                                await uploadEncryptedCredentialAndLeafToContract(enc, this.props.credentialsDB, leaf)
                                 
 
                                 //CredentialIssued event catch
                                 if(this.props.credentialsDB){
-                                this.props.credentialsDB.on("CredentialSavedInRegister",(credentialNo) => {
-                                    if(credentialNo === (this.state.credentialsCounter + 1)){
-                                        this.setState((state)=> ({step2flag: true}))
-                                    }
-                                })}
-
-                                //compute Merkle leave
-                                const leaf = computeLeave(this.state.credentialJSON, this.state.claimsArray)
-                                this.setState((state)=> ({step3flag: true}))
-                                
-                                //insert leaf on merkle tree on chain
-                                await insertLeaf(this.props.credentialsDB,leaf)
-                                    if(this.props.credentialsDB){
+                                    this.props.credentialsDB.on("CredentialSavedInRegister",(credentialNo) => {
+                                        if(credentialNo === (this.state.credentialsCounter + 1)){
+                                            this.setState((state)=> ({step2flag: true}))
+                                        }
+                                    })
                                     this.props.credentialsDB.on("LeafInserted",(eventleaf,root) =>{
                                         if(eventleaf.toBigInt() === leaf){this.setState((state)=> ({step4flag: true}))}
-                                    })
+                                    })                          
                                 }
+
+        
                                 
 
                                 }}>Confirm credential issuance</button>

@@ -19,7 +19,8 @@ contract CredentialsDB is Ownable{
     //Merkle Tree
     using IncrementalBinaryTree for IncrementalTreeData;
     IncrementalTreeData public tree;
-    uint256 private constant TREE_DEPTH=10;
+    uint256 private constant TREE_DEPTH=32;
+    uint256[2**TREE_DEPTH] public leavesArray;
 
     //Encrypted credentials register
     string[2**TREE_DEPTH] public credentialsRegister;
@@ -38,10 +39,13 @@ contract CredentialsDB is Ownable{
         credentialsSchemaSet=true;
     }
 
-    function saveCredential(string calldata data) external onlyOwner(){
+    function saveCredential(string calldata data, uint256 leaf) external onlyOwner(){
         credentialsRegister[credentialsCounter] = data;
+        tree.insert(leaf);
+        leavesArray[credentialsCounter] = leaf;
         credentialsCounter ++;
-
+        
+        emit LeafInserted(leaf, tree.root);
         emit CredentialSavedInRegister(credentialsCounter);
     }
 
@@ -51,8 +55,8 @@ contract CredentialsDB is Ownable{
 
     //Merkle tree functions
     function insertLeaf(uint256 leaf) external {
-        tree.insert(leaf);
-        emit LeafInserted(leaf, tree.root);
+
+        
     }
 
 

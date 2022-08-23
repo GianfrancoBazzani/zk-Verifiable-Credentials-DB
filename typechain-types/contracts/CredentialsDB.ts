@@ -34,9 +34,10 @@ export interface CredentialsDBInterface extends utils.Interface {
     "credentialsSchema()": FunctionFragment;
     "credentialsSchemaSet()": FunctionFragment;
     "insertLeaf(uint256)": FunctionFragment;
+    "leavesArray(uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
-    "saveCredential(string)": FunctionFragment;
+    "saveCredential(string,uint256)": FunctionFragment;
     "setCredentialsSchema(string)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "tree()": FunctionFragment;
@@ -50,6 +51,7 @@ export interface CredentialsDBInterface extends utils.Interface {
       | "credentialsSchema"
       | "credentialsSchemaSet"
       | "insertLeaf"
+      | "leavesArray"
       | "owner"
       | "renounceOwnership"
       | "saveCredential"
@@ -79,6 +81,10 @@ export interface CredentialsDBInterface extends utils.Interface {
     functionFragment: "insertLeaf",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "leavesArray",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
@@ -86,7 +92,7 @@ export interface CredentialsDBInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "saveCredential",
-    values: [PromiseOrValue<string>]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "setCredentialsSchema",
@@ -119,6 +125,10 @@ export interface CredentialsDBInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "insertLeaf", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "leavesArray",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
@@ -227,6 +237,11 @@ export interface CredentialsDB extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    leavesArray(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     renounceOwnership(
@@ -235,6 +250,7 @@ export interface CredentialsDB extends BaseContract {
 
     saveCredential(
       data: PromiseOrValue<string>,
+      leaf: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -280,6 +296,11 @@ export interface CredentialsDB extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  leavesArray(
+    arg0: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   owner(overrides?: CallOverrides): Promise<string>;
 
   renounceOwnership(
@@ -288,6 +309,7 @@ export interface CredentialsDB extends BaseContract {
 
   saveCredential(
     data: PromiseOrValue<string>,
+    leaf: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -333,12 +355,18 @@ export interface CredentialsDB extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    leavesArray(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     owner(overrides?: CallOverrides): Promise<string>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     saveCredential(
       data: PromiseOrValue<string>,
+      leaf: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -409,6 +437,11 @@ export interface CredentialsDB extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    leavesArray(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     renounceOwnership(
@@ -417,6 +450,7 @@ export interface CredentialsDB extends BaseContract {
 
     saveCredential(
       data: PromiseOrValue<string>,
+      leaf: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -459,6 +493,11 @@ export interface CredentialsDB extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    leavesArray(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     renounceOwnership(
@@ -467,6 +506,7 @@ export interface CredentialsDB extends BaseContract {
 
     saveCredential(
       data: PromiseOrValue<string>,
+      leaf: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

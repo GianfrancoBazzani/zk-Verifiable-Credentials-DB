@@ -29,11 +29,12 @@ import type {
 
 export interface CredentialsDBInterface extends utils.Interface {
   functions: {
+    "TREE_DEPTH()": FunctionFragment;
     "credentialsCounter()": FunctionFragment;
     "credentialsRegister(uint256)": FunctionFragment;
     "credentialsSchema()": FunctionFragment;
     "credentialsSchemaSet()": FunctionFragment;
-    "insertLeaf(uint256)": FunctionFragment;
+    "getLeavesArray()": FunctionFragment;
     "leavesArray(uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
@@ -46,11 +47,12 @@ export interface CredentialsDBInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "TREE_DEPTH"
       | "credentialsCounter"
       | "credentialsRegister"
       | "credentialsSchema"
       | "credentialsSchemaSet"
-      | "insertLeaf"
+      | "getLeavesArray"
       | "leavesArray"
       | "owner"
       | "renounceOwnership"
@@ -61,6 +63,10 @@ export interface CredentialsDBInterface extends utils.Interface {
       | "viewArray"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "TREE_DEPTH",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "credentialsCounter",
     values?: undefined
@@ -78,8 +84,8 @@ export interface CredentialsDBInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "insertLeaf",
-    values: [PromiseOrValue<BigNumberish>]
+    functionFragment: "getLeavesArray",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "leavesArray",
@@ -108,6 +114,7 @@ export interface CredentialsDBInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
 
+  decodeFunctionResult(functionFragment: "TREE_DEPTH", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "credentialsCounter",
     data: BytesLike
@@ -124,7 +131,10 @@ export interface CredentialsDBInterface extends utils.Interface {
     functionFragment: "credentialsSchemaSet",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "insertLeaf", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getLeavesArray",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "leavesArray",
     data: BytesLike
@@ -221,6 +231,8 @@ export interface CredentialsDB extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    TREE_DEPTH(overrides?: CallOverrides): Promise<[number]>;
+
     credentialsCounter(overrides?: CallOverrides): Promise<[number]>;
 
     credentialsRegister(
@@ -232,10 +244,7 @@ export interface CredentialsDB extends BaseContract {
 
     credentialsSchemaSet(overrides?: CallOverrides): Promise<[boolean]>;
 
-    insertLeaf(
-      leaf: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
+    getLeavesArray(overrides?: CallOverrides): Promise<[BigNumber[]]>;
 
     leavesArray(
       arg0: PromiseOrValue<BigNumberish>,
@@ -280,6 +289,8 @@ export interface CredentialsDB extends BaseContract {
     ): Promise<[string]>;
   };
 
+  TREE_DEPTH(overrides?: CallOverrides): Promise<number>;
+
   credentialsCounter(overrides?: CallOverrides): Promise<number>;
 
   credentialsRegister(
@@ -291,10 +302,7 @@ export interface CredentialsDB extends BaseContract {
 
   credentialsSchemaSet(overrides?: CallOverrides): Promise<boolean>;
 
-  insertLeaf(
-    leaf: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
+  getLeavesArray(overrides?: CallOverrides): Promise<BigNumber[]>;
 
   leavesArray(
     arg0: PromiseOrValue<BigNumberish>,
@@ -339,6 +347,8 @@ export interface CredentialsDB extends BaseContract {
   ): Promise<string>;
 
   callStatic: {
+    TREE_DEPTH(overrides?: CallOverrides): Promise<number>;
+
     credentialsCounter(overrides?: CallOverrides): Promise<number>;
 
     credentialsRegister(
@@ -350,10 +360,7 @@ export interface CredentialsDB extends BaseContract {
 
     credentialsSchemaSet(overrides?: CallOverrides): Promise<boolean>;
 
-    insertLeaf(
-      leaf: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    getLeavesArray(overrides?: CallOverrides): Promise<BigNumber[]>;
 
     leavesArray(
       arg0: PromiseOrValue<BigNumberish>,
@@ -421,6 +428,8 @@ export interface CredentialsDB extends BaseContract {
   };
 
   estimateGas: {
+    TREE_DEPTH(overrides?: CallOverrides): Promise<BigNumber>;
+
     credentialsCounter(overrides?: CallOverrides): Promise<BigNumber>;
 
     credentialsRegister(
@@ -432,10 +441,7 @@ export interface CredentialsDB extends BaseContract {
 
     credentialsSchemaSet(overrides?: CallOverrides): Promise<BigNumber>;
 
-    insertLeaf(
-      leaf: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
+    getLeavesArray(overrides?: CallOverrides): Promise<BigNumber>;
 
     leavesArray(
       arg0: PromiseOrValue<BigNumberish>,
@@ -473,6 +479,8 @@ export interface CredentialsDB extends BaseContract {
   };
 
   populateTransaction: {
+    TREE_DEPTH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     credentialsCounter(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -488,10 +496,7 @@ export interface CredentialsDB extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    insertLeaf(
-      leaf: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
+    getLeavesArray(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     leavesArray(
       arg0: PromiseOrValue<BigNumberish>,

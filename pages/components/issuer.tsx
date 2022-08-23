@@ -194,6 +194,9 @@ export default class Issuer extends Component <{
                                 const leaf = computeLeave(this.state.credentialJSON, this.state.claimsArray)
                                 this.setState((state)=> ({step3flag: true}))
 
+                                let print: string | ethers.BigNumber = ethers.BigNumber.from(leaf)
+                                print = print.toHexString()
+                                console.log(print)
                                 //Encrypted credential and leaf upload to contract
                                 await uploadEncryptedCredentialAndLeafToContract(enc, this.props.credentialsDB, leaf)
                                 

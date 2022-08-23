@@ -6,6 +6,7 @@ import { isGeneratorFunction } from 'util/types';
 import {poseidon} from "circomlibjs"
 import { throws } from 'assert';
 import {IncrementalMerkleTree} from "@zk-kit/incremental-merkle-tree"
+import { copyFile } from 'fs/promises';
 
 
 /*functions to be transfered to user portal */
@@ -44,8 +45,18 @@ async function readSchemaClaims(contract: Contract | undefined){
 }
 
 async function generateMerkleProof(contract: Contract | undefined, credentialNumber: number){ 
-    /*Reproduce On Chain tree*/
-    console.log("hola")
+    /*Reproduce Merkle Tree that is in the contract and generatig the proof*/
+    if(contract){
+    const depth = await contract.TREE_DEPTH()
+    const leavesArray = await contract.getLeavesArray()
+    
+    const tree = new IncrementalMerkleTree(poseidon , depth, BigInt(0), 2)
+    leavesArray.forEach((element: ethers.BigNumber) => {
+        tree.insert(element.toBigInt())      
+    });
+
+    const proof = tree.createProof(credentialNumber-1)
+    }
 }
 
 export default class UserProof extends Component <{
@@ -95,7 +106,7 @@ export default class UserProof extends Component <{
                 <h3>Selective disclosure selection</h3>
                     {this.state.claimsArray.map((claimNames, index) => {
                         return(
-                            <div className={styles.credNumberIn}>
+                            <div key={claimNames} className={styles.credNumberIn}>
                                 <p>{claimNames}</p> <input type = "checkbox" onChange={(event  : React.ChangeEvent<HTMLInputElement>)=>{
                                    let newDisclosureVector = this.state.disclosureVector
                                    newDisclosureVector[index] = event.target.checked? 1:0

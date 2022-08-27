@@ -6,7 +6,9 @@ import { isGeneratorFunction } from 'util/types';
 import {poseidon} from "circomlibjs"
 import { throws } from 'assert';
 import {IncrementalMerkleTree} from "@zk-kit/incremental-merkle-tree"
-import { copyFile } from 'fs/promises';
+import { copyFile } from 'fs/promises'
+const groth16 = require("snarkjs").groth16;
+
 
 
 /*functions to be transfered to user portal */
@@ -16,8 +18,20 @@ async function downloadEncryptedCredentialFromContract(index: number, contract: 
         const encCredential = await contract.viewArray(index)
         return encCredential
     }
-    
 }
+
+//convert ascii to hex
+function ascii_to_hex(str: string)
+  {
+	var arr1 = ["0x"];
+	for (var n = 0, l = str.length; n < l; n ++) 
+     {
+		var hex = Number(str.charCodeAt(n)).toString(16);
+		arr1.push(hex);
+	 }
+	return arr1.join('');
+   }
+
 
 //asymetric decrytion with MetaMask this function do not goes here, goes in subject portal
 async function decryptionWithMM(walletAddress: string, encCredential: string){
@@ -56,7 +70,58 @@ async function generateMerkleProof(contract: Contract | undefined, credentialNum
     });
 
     const proof = tree.createProof(credentialNumber-1)
+
+    return proof
     }
+}
+    /*
+    signal input ClaimsVals[claimsN];
+    signal input MerkleProofSiblings[depth];
+    signal input MerkleProofPathIndices[depth];
+    signal input MerkleProofRoot;
+    signal input EthAddress;
+    signal input DisclosureVector[claimsN];
+    */
+    async function generateZKProof(credentialJSON:{"claims":{ [x: string]: string; }}, claimsArray: [string] | undefined, merkleProof: any, disclosureVector: [number]){
+
+        const ethAddress = credentialJSON.claims.ethAddress
+        //claim values are type string, has to be converted to ascii bytes like(Address is not converted)
+        let convertedArrayHex:string[]=[];
+        if(claimsArray){
+            for(let i in claimsArray){
+                if(claimsArray[i] !== "ethAddress"){
+                    convertedArrayHex.push(ascii_to_hex(credentialJSON.claims[claimsArray[i]]))
+                } else {
+                    convertedArrayHex.push(credentialJSON.claims[claimsArray[i]])
+                }
+            }
+        }
+        //convertig sobligs form [BigInt] to hexStirng
+        var siblings = merkleProof.siblings.map((val: any) => {
+            var value = ethers.BigNumber.from(val[0])
+            return value.toHexString()
+        })
+        
+        var root: any = ethers.BigNumber.from(merkleProof.root)
+        root = root.toHexString()
+        
+        const inputs =  {
+        "ClaimsVals": convertedArrayHex,
+        "MerkleProofSiblings": siblings,
+        "MerkleProofPathIndices": merkleProof.pathIndices,
+        "MerkleProofRoot" : root,
+        "EthAddress" : ethAddress,
+        "DisclosureVector" : disclosureVector
+        }
+        
+        const { proof, publicSignals } = await groth16.fullProve(
+            inputs, 
+            "zkVerifiableCredentialsDBCore.wasm",
+            "circuit_final.zkey");
+        
+        //const proof = "a"
+        //const publicSignals = "a"
+        return {proof , publicSignals}
 }
 
 export default class UserProof extends Component <{
@@ -115,11 +180,15 @@ export default class UserProof extends Component <{
                             </div>
                         )
                     })}
-                <button onClick={()=>{
+                <button onClick={async ()=>{
                     /*Proof generation */
-                    const merkleProof = generateMerkleProof(this.props.credentialsDB, this.state.credentialNumber)
+                    const merkleProof = await generateMerkleProof(this.props.credentialsDB, this.state.credentialNumber)
+                    const {proof , publicSignals} = await generateZKProof(this.state.credentialJSON, this.state.claimsArray, merkleProof , this.state.disclosureVector)
                     
-            
+                    console.log(this.state.credentialJSON)
+                    console.log(proof)
+                    console.log(publicSignals)
+
                 }}>Generate proof</button>
                 
             </div>:<div></div>}

@@ -42,6 +42,7 @@ export interface CredentialsDBInterface extends utils.Interface {
     "setCredentialsSchema(string)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
     "tree()": FunctionFragment;
+    "verifier()": FunctionFragment;
     "viewArray(uint256)": FunctionFragment;
   };
 
@@ -60,6 +61,7 @@ export interface CredentialsDBInterface extends utils.Interface {
       | "setCredentialsSchema"
       | "transferOwnership"
       | "tree"
+      | "verifier"
       | "viewArray"
   ): FunctionFragment;
 
@@ -109,6 +111,7 @@ export interface CredentialsDBInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(functionFragment: "tree", values?: undefined): string;
+  encodeFunctionData(functionFragment: "verifier", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "viewArray",
     values: [PromiseOrValue<BigNumberish>]
@@ -157,6 +160,7 @@ export interface CredentialsDBInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "tree", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "verifier", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "viewArray", data: BytesLike): Result;
 
   events: {
@@ -283,6 +287,8 @@ export interface CredentialsDB extends BaseContract {
       }
     >;
 
+    verifier(overrides?: CallOverrides): Promise<[string]>;
+
     viewArray(
       i: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -341,6 +347,8 @@ export interface CredentialsDB extends BaseContract {
     }
   >;
 
+  verifier(overrides?: CallOverrides): Promise<string>;
+
   viewArray(
     i: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
@@ -396,6 +404,8 @@ export interface CredentialsDB extends BaseContract {
         numberOfLeaves: BigNumber;
       }
     >;
+
+    verifier(overrides?: CallOverrides): Promise<string>;
 
     viewArray(
       i: PromiseOrValue<BigNumberish>,
@@ -472,6 +482,8 @@ export interface CredentialsDB extends BaseContract {
 
     tree(overrides?: CallOverrides): Promise<BigNumber>;
 
+    verifier(overrides?: CallOverrides): Promise<BigNumber>;
+
     viewArray(
       i: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -526,6 +538,8 @@ export interface CredentialsDB extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     tree(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    verifier(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     viewArray(
       i: PromiseOrValue<BigNumberish>,

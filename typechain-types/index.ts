@@ -16,5 +16,7 @@ export type { PoseidonT6 } from "./@zk-kit/incremental-merkle-tree.sol/Hashes.so
 export { PoseidonT6__factory } from "./factories/@zk-kit/incremental-merkle-tree.sol/Hashes.sol/PoseidonT6__factory";
 export type { CredentialsDB } from "./contracts/CredentialsDB";
 export { CredentialsDB__factory } from "./factories/contracts/CredentialsDB__factory";
-export type { Lock } from "./contracts/Lock";
-export { Lock__factory } from "./factories/contracts/Lock__factory";
+//export type { Lock } from "./contracts/Lock"; //COMMENDED BY GB
+//export { Lock__factory } from "./factories/contracts/Lock__factory"; ////COMMENDED BY GB
+export type { Verifier } from "./contracts/zkVerifiableCredentialsDBCoreVerifier.sol/Verifier";
+export { Verifier__factory } from "./factories/contracts/zkVerifiableCredentialsDBCoreVerifier.sol/Verifier__factory";

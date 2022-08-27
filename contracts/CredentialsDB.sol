@@ -15,20 +15,23 @@ contract CredentialsDB is Ownable{
     //JSON credentials schema
     string public credentialsSchema;
     bool public credentialsSchemaSet = false;
+    address public verifier;
     
     //Merkle Tree
     using IncrementalBinaryTree for IncrementalTreeData;
     IncrementalTreeData public tree;
-    uint32 public constant TREE_DEPTH=32;
+    uint32 public constant TREE_DEPTH=16;
     uint256[] public leavesArray;
 
     //Encrypted credentials register
-    string[2**TREE_DEPTH] public credentialsRegister;
+    string[] public credentialsRegister;
     uint32 public credentialsCounter=0;
 
     //constructor
-    constructor(){
+    constructor(address _verifier){
         tree.init(TREE_DEPTH,0);
+        verifier = _verifier;
+
     }
 
 
@@ -40,7 +43,7 @@ contract CredentialsDB is Ownable{
     }
 
     function saveCredential(string calldata data, uint256 leaf) external onlyOwner(){
-        credentialsRegister[credentialsCounter] = data;
+        credentialsRegister.push(data);
         tree.insert(leaf);
         leavesArray.push(leaf);
         credentialsCounter ++;

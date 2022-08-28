@@ -14,7 +14,7 @@ import UserVerify from './components/userverify'
 
 const Home: NextPage = () => {
   //Contracts Constats
-  const CREDENTIALS_DB_ADDRESS = "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6"
+  const CREDENTIALS_DB_ADDRESS = "0x1D5d8bF49494B9d4E83Ff4Bf7c25Cd3B8cA284b4"
 
   //wallet connection
   const [walletAddress, setWalletAddress] = useState("")
@@ -112,7 +112,7 @@ const Home: NextPage = () => {
                 {
                   {
                     'proove':<UserProof walletAddress={walletAddress} credentialsDB={credentialsDB}></UserProof>,
-                    'verify':<h1>verify</h1>,
+                    'verify':<UserVerify walletAddress={walletAddress} credentialsDB={credentialsDB} signer={signer}></UserVerify>,
                     'getPubAdd':<div><h4>Your public key: {walletPublicKey}</h4></div>,
                     'default': 
                     <div  className={styles.main}>

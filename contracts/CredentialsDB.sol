@@ -34,8 +34,6 @@ contract CredentialsDB is Ownable{
 
     }
 
-
-    //Encrypred credentials storage functions 
     function setCredentialsSchema(string memory schema) external onlyOwner{
         require(!credentialsSchemaSet,"Schema already set");
         credentialsSchema=schema;
@@ -58,5 +56,9 @@ contract CredentialsDB is Ownable{
 
     function getLeavesArray() external view returns (uint256[] memory){
         return leavesArray;
-    } 
+    }
+
+    function getMerkleRoot() external view returns (uint256){
+        return tree.root;
+    }
 }

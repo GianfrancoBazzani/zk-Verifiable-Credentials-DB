@@ -27,4 +27,10 @@ snarkjs zkey export verificationkey zkVerifiableCredentialsDBCore/circuit_final.
 # generate solidity contract
 snarkjs zkey export solidityverifier zkVerifiableCredentialsDBCore/circuit_final.zkey ../contracts/zkVerifiableCredentialsDBCoreVerifier.sol
 
+# copy output to public folder to be used by front end
+
+cp zkVerifiableCredentialsDBCore/circuit_final.zkey ../public/circuit_final.zkey
+
+cp zkVerifiableCredentialsDBCore/zkVerifiableCredentialsDBCore_js/zkVerifiableCredentialsDBCore.wasm ../public/zkVerifiableCredentialsDBCore.wasm
+
 cd ..

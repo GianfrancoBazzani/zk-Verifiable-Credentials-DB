@@ -74,18 +74,11 @@ async function generateMerkleProof(contract: Contract | undefined, credentialNum
     return proof
     }
 }
-    /*
-    signal input ClaimsVals[claimsN];
-    signal input MerkleProofSiblings[depth];
-    signal input MerkleProofPathIndices[depth];
-    signal input MerkleProofRoot;
-    signal input EthAddress;
-    signal input DisclosureVector[claimsN];
-    */
+ 
     async function generateZKProof(credentialJSON:{"claims":{ [x: string]: string; }}, claimsArray: [string] | undefined, merkleProof: any, disclosureVector: [number]){
 
         const ethAddress = credentialJSON.claims.ethAddress
-        //claim values are type string, has to be converted to ascii bytes like(Address is not converted)
+        //claim values are string type. ascii bytes like conversion (Address is not converted)
         let convertedArrayHex:string[]=[];
         if(claimsArray){
             for(let i in claimsArray){
@@ -96,7 +89,7 @@ async function generateMerkleProof(contract: Contract | undefined, credentialNum
                 }
             }
         }
-        //convertig sobligs form [BigInt] to hexStirng
+        //convertig sibligs form [BigInt] to hexStirng
         var siblings = merkleProof.siblings.map((val: any) => {
             var value = ethers.BigNumber.from(val[0])
             return value.toHexString()
@@ -118,9 +111,8 @@ async function generateMerkleProof(contract: Contract | undefined, credentialNum
             inputs, 
             "zkVerifiableCredentialsDBCore.wasm",
             "circuit_final.zkey");
-        
-        //const proof = "a"
-        //const publicSignals = "a"
+     
+
         return {proof , publicSignals}
 }
 
@@ -132,7 +124,8 @@ export default class UserProof extends Component <{
     credentialNumber: number,
     claimsArray: [string] | undefined,
     credentialJSON:{"claims":{ [x: string]: string; }}
-    disclosureVector: [number]
+    disclosureVector: [number],
+    proof: any,
 }
 > {
     
@@ -185,13 +178,23 @@ export default class UserProof extends Component <{
                     const merkleProof = await generateMerkleProof(this.props.credentialsDB, this.state.credentialNumber)
                     const {proof , publicSignals} = await generateZKProof(this.state.credentialJSON, this.state.claimsArray, merkleProof , this.state.disclosureVector)
                     
-                    console.log(this.state.credentialJSON)
-                    console.log(proof)
-                    console.log(publicSignals)
+                    const proofPack = {
+                        "proof": proof,
+                        "publicSignals": publicSignals
+                    }                    
 
+                    this.setState((state) => ({proof : JSON.stringify(proofPack)}))
+
+    
                 }}>Generate proof</button>
                 
             </div>:<div></div>}
+            <div>
+                
+                {
+                (this.state && this.state.proof)?<div><textarea rows={15} cols={100}>{this.state.proof}</textarea> </div>:<div></div>
+                }
+            </div>
         </div> 
     )
   }

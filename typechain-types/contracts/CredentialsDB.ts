@@ -35,6 +35,7 @@ export interface CredentialsDBInterface extends utils.Interface {
     "credentialsSchema()": FunctionFragment;
     "credentialsSchemaSet()": FunctionFragment;
     "getLeavesArray()": FunctionFragment;
+    "getMerkleRoot()": FunctionFragment;
     "leavesArray(uint256)": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
@@ -54,6 +55,7 @@ export interface CredentialsDBInterface extends utils.Interface {
       | "credentialsSchema"
       | "credentialsSchemaSet"
       | "getLeavesArray"
+      | "getMerkleRoot"
       | "leavesArray"
       | "owner"
       | "renounceOwnership"
@@ -87,6 +89,10 @@ export interface CredentialsDBInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getLeavesArray",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getMerkleRoot",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -136,6 +142,10 @@ export interface CredentialsDBInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getLeavesArray",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getMerkleRoot",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -250,6 +260,8 @@ export interface CredentialsDB extends BaseContract {
 
     getLeavesArray(overrides?: CallOverrides): Promise<[BigNumber[]]>;
 
+    getMerkleRoot(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     leavesArray(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -310,6 +322,8 @@ export interface CredentialsDB extends BaseContract {
 
   getLeavesArray(overrides?: CallOverrides): Promise<BigNumber[]>;
 
+  getMerkleRoot(overrides?: CallOverrides): Promise<BigNumber>;
+
   leavesArray(
     arg0: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
@@ -369,6 +383,8 @@ export interface CredentialsDB extends BaseContract {
     credentialsSchemaSet(overrides?: CallOverrides): Promise<boolean>;
 
     getLeavesArray(overrides?: CallOverrides): Promise<BigNumber[]>;
+
+    getMerkleRoot(overrides?: CallOverrides): Promise<BigNumber>;
 
     leavesArray(
       arg0: PromiseOrValue<BigNumberish>,
@@ -453,6 +469,8 @@ export interface CredentialsDB extends BaseContract {
 
     getLeavesArray(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getMerkleRoot(overrides?: CallOverrides): Promise<BigNumber>;
+
     leavesArray(
       arg0: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -509,6 +527,8 @@ export interface CredentialsDB extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getLeavesArray(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    getMerkleRoot(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     leavesArray(
       arg0: PromiseOrValue<BigNumberish>,

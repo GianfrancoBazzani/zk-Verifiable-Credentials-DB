@@ -7,10 +7,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "deployfront": "next build && next export -o dist && surge dist",
     "test": "hardhat test",
     "hardhat:node": "hardhat node --verbose",
     "compile": "hardhat compile",
     "deploy": "hardhat run --network localhost scripts/deploy.ts",
+    "deployharmonydevnet": "hardhat run --network harmonydevnet scripts/deploy.ts",
     "hardhat:test": "hardhat test",
     "compilecircuit": " ./scripts/compile-circuit.sh",
     "bumpsolidityverifier": "node scripts/bump-solidity.js"
@@ -50,6 +52,7 @@
     "hardhat": "^2.10.1",
     "hardhat-gas-reporter": "^1.0.8",
     "solidity-coverage": "^0.7.21",
+    "surge": "^0.23.1",
     "ts-node": "^10.9.1",
     "typechain": "^8.1.0",
     "typescript": "4.7.4"

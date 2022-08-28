@@ -4,4 +4,3 @@
 import type * as zkVerifiableCredentialsDbCoreVerifierSol from "./zkVerifiableCredentialsDBCoreVerifier.sol";
 export type { zkVerifiableCredentialsDbCoreVerifierSol };
 export type { CredentialsDB } from "./CredentialsDB";
-//export type { Lock } from "./Lock"; // COMMENTED BY GB

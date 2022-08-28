@@ -3,4 +3,3 @@
 /* eslint-disable */
 export * as zkVerifiableCredentialsDbCoreVerifierSol from "./zkVerifiableCredentialsDBCoreVerifier.sol";
 export { CredentialsDB__factory } from "./CredentialsDB__factory";
-//export { Lock__factory } from "./Lock__factory"; // COMMENTED BY GB

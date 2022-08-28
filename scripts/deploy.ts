@@ -5,7 +5,7 @@ import {poseidon_gencontract as poseidonContract} from "circomlibjs"
 
 
 async function main() {
-  //merkle tree library
+  //deploy libs
   const poseidonT3ABI = poseidonContract.generateABI(2)
   const poseidonT3Bytecode = poseidonContract.createCode(2)
 
@@ -25,7 +25,14 @@ async function main() {
   const incrementalBinaryTreeLib = await IncrementalBinaryTreeLibFactory.deploy()
   await incrementalBinaryTreeLib.deployed()
 
-  console.log(`Poseidon hash lib deployed in address: ${incrementalBinaryTreeLib.address}`)
+  console.log(`incrementalBinaryTreeLib deployed in address: ${incrementalBinaryTreeLib.address}`)
+  
+  // Verifier contract deployment
+  const Verifier = await ethers.getContractFactory("Verifier");
+  const verifier = await Verifier.deploy();
+  await verifier.deployed();
+
+  console.log(`Verifier contract deployed in address: ${verifier.address}`)
 
   //credentials DB deployment
   const CredentialsDB = await ethers.getContractFactory("CredentialsDB", {
@@ -33,7 +40,7 @@ async function main() {
       IncrementalBinaryTree: incrementalBinaryTreeLib.address
     }
   })
-  const credentialsDB = await CredentialsDB.deploy()
+  const credentialsDB = await CredentialsDB.deploy(verifier.address)
   await credentialsDB.deployed();
   console.log("success credentialsDB.sol deployment")
 

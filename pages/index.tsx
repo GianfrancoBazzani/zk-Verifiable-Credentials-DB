@@ -9,17 +9,22 @@ import { Web3Provider } from '@ethersproject/providers'
 import  CREDENTIAL_DB_ARTIFACT from "../artifacts/contracts/CredentialsDB.sol/CredentialsDB.json"
 import { sign } from 'crypto'
 import Issuer from './components/issuer'
+import UserProof from './components/userproof'
+import UserVerify from './components/userverify' 
 
 const Home: NextPage = () => {
   //Contracts Constats
-  const CREDENTIALS_DB_ADDRESS = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
+  const CREDENTIALS_DB_ADDRESS = "0x1D5d8bF49494B9d4E83Ff4Bf7c25Cd3B8cA284b4"
 
   //wallet connection
   const [walletAddress, setWalletAddress] = useState("")
+  const [walletPublicKey, setWalletPublicKey] = useState("")
   const [provider, setProvider] = useState<Web3Provider | undefined>(undefined)
   const [signer, setSigner] = useState<Signer | undefined>(undefined)
   const [credentialsDB, setCredentialsDB] = useState<Contract | undefined>(undefined)
   const [isIssuer, setIsIssuer] = useState(false);
+  const [walletCon, setWalletCon] = useState(false);
+  const [userSelection, setUserSelection] = useState("default");
   
   //Request account to MM
   async function requestAccount() {
@@ -59,14 +64,27 @@ const Home: NextPage = () => {
           //console.log(sigAdd)
           
           if(owner == sigAdd){
-            setIsIssuer(true);
+            setIsIssuer(true)
           }
-          
+          setWalletCon(true)
         }
 
       }   
   }
 
+  //get public key from MetaMask. this function do not goes here, goes in subject portal
+  async function getPubKeyFromMM(walletAddress: string){
+    if(window.ethereum){
+    const keyB64 = await window.ethereum.request!({
+        method: 'eth_getEncryptionPublicKey',
+        params: [walletAddress]
+    }) as string;
+    //if you want base 64 encoded
+    return keyB64
+    //if you want the decoded form bytes32 like
+    //return ethers.utils.base64.decode(keyB64)
+    }
+  }
 
 
   return (
@@ -86,9 +104,39 @@ const Home: NextPage = () => {
         }
         </div>
       </header>
-      <main className={styles.main}>
-          {isIssuer?<Issuer walletAddress={walletAddress} credentialsDB={credentialsDB}></Issuer>:<h1>ZK Credentials DB</h1>}
-      </main>
+      {
+        walletCon?
+          <main className={styles.main}>
+              {isIssuer?<Issuer walletAddress={walletAddress} credentialsDB={credentialsDB}></Issuer>:
+              <div>
+                {
+                  {
+                    'proove':<UserProof walletAddress={walletAddress} credentialsDB={credentialsDB}></UserProof>,
+                    'verify':<UserVerify walletAddress={walletAddress} credentialsDB={credentialsDB} signer={signer}></UserVerify>,
+                    'getPubAdd':<div><h4>Your public key: {walletPublicKey}</h4></div>,
+                    'default': 
+                    <div  className={styles.main}>
+                      <h1>What you want to do?</h1>
+                      <div className={styles.userSelection}>
+                        <button onClick={()=>{setUserSelection("proove")}}>Prove your credential</button>
+                        <button onClick={()=>{setUserSelection("verify")}}>Verify a proof</button>
+                        <button onClick={async ()=>{
+                          setUserSelection("getPubAdd")
+                          const pubKey = await getPubKeyFromMM(walletAddress)
+                          if(pubKey){setWalletPublicKey(pubKey)}
+                          }}>Get your public key</button>         
+                      </div>
+                    </div>
+                  } [userSelection]
+                }
+              </div>}
+          </main>
+        :
+        <main className={styles.main}>
+          <h1>Connect your wallet first</h1>
+          <p>Your type of account will be automatically detected</p>
+        </main>
+      }
     </div>
   )
 }

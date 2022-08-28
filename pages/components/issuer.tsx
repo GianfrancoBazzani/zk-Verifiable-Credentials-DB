@@ -42,12 +42,12 @@ function encryptWithMM(publicKey: string, credential: {"claims":{ [x: string]: s
 }
 
 //upload encypted data to contract.
-async function uploadEncryptedCredentialToContract(encCredential: string, contract: Contract | undefined){
+async function uploadEncryptedCredentialAndLeafToContract(encCredential: string, contract: Contract | undefined, leaf: string){
     if(contract){
-        const tx = await contract.saveCredential(encCredential)
+        const tx = await contract.saveCredential(encCredential, leaf)
         const txReceip = await tx.wait()
         if(txReceip.status !== 1){
-            alert('error while uploading encrypted credential')
+            alert('error while uploading credential')
             return
         }
     }
@@ -96,56 +96,6 @@ function computeLeave(credentialJSON:{"claims":{ [x: string]: string; }}, claims
         }
     } else {
         throw "ethAddress not found as atribute in credential JSON"
-    }
-}
-
-//insert leaf in merkle tree 
-async function insertLeaf(contract: Contract | undefined, leaf: string){
-    if(contract){
-        const tx = await contract.insertLeaf(leaf)
-        const txReceip = await tx.wait()
-        if(txReceip.status !== 1){
-            alert('error while inserting leaf on merkle tree onchain')
-            return
-        }
-    }
-    
-}
-
-/*functions to be transfered to user portal */
-//download encypted data to contract. this function do not goes here, goes in subject portal
-async function downloadEncryptedCredentialFromContract(index: number, contract: Contract | undefined){
-    if(contract){
-        const encCredential = await contract.saveCredential(index)
-        return encCredential
-    }
-    
-}
-
-//get public key from MetaMask. this function do not goes here, goes in subject portal
-async function getPubKeyFromMM(walletAddress: string){
-    if(window.ethereum){
-    const keyB64 = await window.ethereum.request!({
-        method: 'eth_getEncryptionPublicKey',
-        params: [walletAddress]
-    }) as string;
-    //if you want base 64 encoded
-    return keyB64
-    //if you want the decoded form bytes32 like
-    //return ethers.utils.base64.decode(keyB64)
-    }
-}
-
-//asymetric decrytion with MetaMask this function do not goes here, goes in subject portal
-async function decryptionWithMM(walletAddress: string, encCredential: string){
-    if(window.ethereum){
-        const dataHexLike = `0x${Buffer.from(encCredential,'utf-8').toString('hex')}`
-
-        const decrypt = await window.ethereum.request!({
-            method: 'eth_decrypt',
-            params: [dataHexLike, walletAddress]
-        });
-        return decrypt
     }
 }
 
@@ -240,29 +190,30 @@ export default class Issuer extends Component <{
                                 const enc = encryptWithMM(this.state.subjectEthPubKey,this.state.credentialJSON)
                                 this.setState((state)=> ({step1flag: true}))
                                 
-                                //credential upload
-                                await uploadEncryptedCredentialToContract(enc, this.props.credentialsDB)
+                                //compute Merkle leave
+                                const leaf = computeLeave(this.state.credentialJSON, this.state.claimsArray)
+                                this.setState((state)=> ({step3flag: true}))
+
+                                let print: string | ethers.BigNumber = ethers.BigNumber.from(leaf)
+                                print = print.toHexString()
+                                console.log(print)
+                                //Encrypted credential and leaf upload to contract
+                                await uploadEncryptedCredentialAndLeafToContract(enc, this.props.credentialsDB, leaf)
                                 
 
                                 //CredentialIssued event catch
                                 if(this.props.credentialsDB){
-                                this.props.credentialsDB.on("CredentialSavedInRegister",(credentialNo) => {
-                                    if(credentialNo === (this.state.credentialsCounter + 1)){
-                                        this.setState((state)=> ({step2flag: true}))
-                                    }
-                                })}
-
-                                //compute Merkle leave
-                                const leaf = computeLeave(this.state.credentialJSON, this.state.claimsArray)
-                                this.setState((state)=> ({step3flag: true}))
-                                
-                                //insert leaf on merkle tree on chain
-                                await insertLeaf(this.props.credentialsDB,leaf)
-                                    if(this.props.credentialsDB){
+                                    this.props.credentialsDB.on("CredentialSavedInRegister",(credentialNo) => {
+                                        if(credentialNo === (this.state.credentialsCounter + 1)){
+                                            this.setState((state)=> ({step2flag: true}))
+                                        }
+                                    })
                                     this.props.credentialsDB.on("LeafInserted",(eventleaf,root) =>{
                                         if(eventleaf.toBigInt() === leaf){this.setState((state)=> ({step4flag: true}))}
-                                    })
+                                    })                          
                                 }
+
+        
                                 
 
                                 }}>Confirm credential issuance</button>

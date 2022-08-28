@@ -15,33 +15,38 @@ contract CredentialsDB is Ownable{
     //JSON credentials schema
     string public credentialsSchema;
     bool public credentialsSchemaSet = false;
+    address public verifier;
     
     //Merkle Tree
     using IncrementalBinaryTree for IncrementalTreeData;
     IncrementalTreeData public tree;
-    uint256 private constant TREE_DEPTH=10;
+    uint32 public constant TREE_DEPTH=16;
+    uint256[] public leavesArray;
 
     //Encrypted credentials register
-    string[2**TREE_DEPTH] public credentialsRegister;
+    string[] public credentialsRegister;
     uint32 public credentialsCounter=0;
 
     //constructor
-    constructor(){
+    constructor(address _verifier){
         tree.init(TREE_DEPTH,0);
+        verifier = _verifier;
+
     }
 
-
-    //Encrypred credentials storage functions 
     function setCredentialsSchema(string memory schema) external onlyOwner{
         require(!credentialsSchemaSet,"Schema already set");
         credentialsSchema=schema;
         credentialsSchemaSet=true;
     }
 
-    function saveCredential(string calldata data) external onlyOwner(){
-        credentialsRegister[credentialsCounter] = data;
+    function saveCredential(string calldata data, uint256 leaf) external onlyOwner(){
+        credentialsRegister.push(data);
+        tree.insert(leaf);
+        leavesArray.push(leaf);
         credentialsCounter ++;
 
+        emit LeafInserted(leaf, tree.root);
         emit CredentialSavedInRegister(credentialsCounter);
     }
 
@@ -49,13 +54,11 @@ contract CredentialsDB is Ownable{
         return credentialsRegister[i];
     }
 
-    //Merkle tree functions
-    function insertLeaf(uint256 leaf) external {
-        tree.insert(leaf);
-        emit LeafInserted(leaf, tree.root);
+    function getLeavesArray() external view returns (uint256[] memory){
+        return leavesArray;
     }
 
-
-
-
+    function getMerkleRoot() external view returns (uint256){
+        return tree.root;
+    }
 }

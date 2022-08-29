@@ -66,8 +66,8 @@ function ascii_to_hex(str: string)
 	return arr1.join('');
    }
 
-//compute merkle leave from Credential
-function computeLeave(credentialJSON:{"claims":{ [x: string]: string; }}, claimsArray: [string] | undefined){
+//compute merkle leaf from Credential
+function computeLeaf(credentialJSON:{"claims":{ [x: string]: string; }}, claimsArray: [string] | undefined){
     if(credentialJSON.claims.ethAddress){
         if(claimsArray){
             const ethAddress = credentialJSON.claims.ethAddress
@@ -133,7 +133,7 @@ export default class Issuer extends Component <{
                 }}>Read contract credential schema
             </button>:
             <div className={styles.issuerFormContainer}>
-                <h3>Number of credentials isued:{this.state.credentialsCounter}</h3>
+                <h3>Number of credentials issued:{this.state.credentialsCounter}</h3>
                 <form className={styles.issuerForm} onSubmit={(event: React.FormEvent<HTMLFormElement>) => {
                     /* ON FORM SUBMIT */
                     event.preventDefault();
@@ -184,22 +184,6 @@ export default class Issuer extends Component <{
                                             }
                                         }/>
                             <button onClick={async ()=> {
-                                {/*Credential issuance process*/}
-                                this.setState((state)=> ({issuancePocInit: true}))
-                                //credential encryption
-                                const enc = encryptWithMM(this.state.subjectEthPubKey,this.state.credentialJSON)
-                                this.setState((state)=> ({step1flag: true}))
-                                
-                                //compute Merkle leave
-                                const leaf = computeLeave(this.state.credentialJSON, this.state.claimsArray)
-                                this.setState((state)=> ({step3flag: true}))
-
-                                let print: string | ethers.BigNumber = ethers.BigNumber.from(leaf)
-                                print = print.toHexString()
-                                console.log(print)
-                                //Encrypted credential and leaf upload to contract
-                                await uploadEncryptedCredentialAndLeafToContract(enc, this.props.credentialsDB, leaf)
-                                
 
                                 //CredentialIssued event catch
                                 if(this.props.credentialsDB){
@@ -213,6 +197,24 @@ export default class Issuer extends Component <{
                                     })                          
                                 }
 
+                                {/*Credential issuance process*/}
+                                this.setState((state)=> ({issuancePocInit: true}))
+                                //credential encryption
+                                const enc = encryptWithMM(this.state.subjectEthPubKey,this.state.credentialJSON)
+                                this.setState((state)=> ({step1flag: true}))
+                                
+                                //compute Merkle Tree leaf
+                                const leaf = computeLeaf(this.state.credentialJSON, this.state.claimsArray)
+                                this.setState((state)=> ({step3flag: true}))
+
+                                let print: string | ethers.BigNumber = ethers.BigNumber.from(leaf)
+                                print = print.toHexString()
+
+                                //Encrypted credential and leaf upload to contract
+                                await uploadEncryptedCredentialAndLeafToContract(enc, this.props.credentialsDB, leaf)
+                                
+
+                                
         
                                 
 
@@ -224,15 +226,15 @@ export default class Issuer extends Component <{
                             {this.state.step1flag?<p className={styles.check}>✅</p>:<div className={styles.loadingSpinner}></div>}
                             </div>
                             <div className={styles.issueStep}>
-                            <p>Uploading encripted credential to smart contract</p>
+                            <p>Uploading encrypted credential to smart contract</p>
                             {this.state.step2flag?<p className={styles.check}>✅</p>:<div className={styles.loadingSpinner}></div>}
                             </div>
                             <div className={styles.issueStep}>
-                            <p>Computing Credentials Merkle Tree Leave</p>
+                            <p>Computing Credentials Merkle Tree leaf</p>
                             {this.state.step3flag?<p className={styles.check}>✅</p>:<div className={styles.loadingSpinner}></div>}
                             </div>
                             <div className={styles.issueStep}>
-                            <p>Uploading leave to smart contract and computing merkle root</p>
+                            <p>Uploading leaf to smart contract and computing merkle root</p>
                             {this.state.step4flag?<p className={styles.check}>✅</p>:<div className={styles.loadingSpinner}></div>}
                             </div>
                         </div>:<div></div>}

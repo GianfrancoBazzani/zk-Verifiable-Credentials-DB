@@ -1,6 +1,6 @@
 # zk-Verifiable-Credentials-DB
 
-A credentials database encrypted and stored on chain.
+A credentials database encrypted and stored on chain with zk mecanics.
 
 This tool allows to an issuer to create a database to store credentials issued over subjects, and have these credentials always accessible and
 untampered thanks to immutable proprieties of the blockchain. Also, a zk verification is implemented to allow the subjects proof they credentials with selective disclosure of inner claims. This project assumes that subjects are in possession of eth EOA used as a Self-sovereign identity ID.
@@ -55,4 +55,17 @@ Issuer private key: "0d065b1a5dc3f5e336f20b51e7c0cca40bcffe17b64d9e01a0fa0a2188d
 
 5. Run bump solidity script using `yarn bumpsolidityverifier` or `node scripts/compile-circuit.sh`
 
-6. Now you have to deploy the contracts, use `yarn deploy` to deploy it in the hardhat local network or setup a custom network in hardhat.config.ts 
+6. Now you have to deploy the contracts, use `yarn deploy` to deploy it in the hardhat local network (you should have it running) or setup a custom network in hardhat.config.ts and use `npm hardhat run --network "custom network"`scripts/deploy.ts.
+
+<p align="center" >
+ <img width="500" src="img/deployment-log.PNG">
+</p>
+
+7. Now you have to take the Contracct address, shown in the deployment log and set it in page/index.tsx file, and build and deploy de front end using `yarn deployfront`
+
+<p align="center" >
+ <img width="500" src="img/set-credentials-db-add.PNG">
+</p>
+
+
+

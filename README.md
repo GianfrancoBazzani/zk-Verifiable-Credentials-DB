@@ -35,3 +35,11 @@ Issuer private key: "0d065b1a5dc3f5e336f20b51e7c0cca40bcffe17b64d9e01a0fa0a2188d
 
 
 
+## Deploy an instance steps
+
+1. Modify the example credential schema credentials-src/examplecredentialschema.json. The schema is a JSON file that defines the claims of a credentials set.
+
+<p align="center" >
+ <img width="500" src="img/credentials-schema.PNG">
+</p>
+

@@ -43,3 +43,16 @@ Issuer private key: "0d065b1a5dc3f5e336f20b51e7c0cca40bcffe17b64d9e01a0fa0a2188d
  <img width="500" src="img/credentials-schema.PNG">
 </p>
 
+2. Modify circuits/zkVerifiableCredentialsDBCore.circom, set depth and claimsN parameters. Depth is the depth of the Merkle Tree, this value is related to the total credentials that can be issued (total credentials = 2^depth). If we set a deeper Merkle Tree, circom compilation will output more constraints and we will need a bigger Ptau file to build snark setup ([Check available Ptau files](https://github.com/iden3/snarkjs#7-prepare-phase-2)). The clamisN parameter has to correspond with the length of the claims array in the shema. Bellow is shown an example where i set depth=16 and claimsN=5.
+
+<p align="center" >
+ <img width="500" src="img/circuit-settings.PNG">
+</p>
+
+3. Set same TREE_DEPTH in the credentialDB.sol.
+
+4. Compile circuit using `yarn compilecircuit` or running `scripts/compile-circuit.sh` script. Here we can modify the script to select the Ptau file if the compilation of the circuit has to many constrait.
+
+5. Run bump solidity script using `yarn bumpsolidityverifier` or `node scripts/compile-circuit.sh`
+
+6. Now you have to deploy the contracts, use `yarn deploy` to deploy it in the hardhat local network or setup a custom network in hardhat.config.ts 

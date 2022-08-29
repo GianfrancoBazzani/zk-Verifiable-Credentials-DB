@@ -55,7 +55,7 @@ Issuer private key: "0d065b1a5dc3f5e336f20b51e7c0cca40bcffe17b64d9e01a0fa0a2188d
 
 5. Run bump solidity script using `yarn bumpsolidityverifier` or `node scripts/compile-circuit.sh`
 
-6. Now you have to deploy the contracts, use `yarn deploy` to deploy it in the hardhat local network (you should have it running) or setup a custom network in hardhat.config.ts and use `npm hardhat run --network "custom network"`scripts/deploy.ts.
+6. Now you have to deploy the contracts, use `yarn deploy` to deploy it in the hardhat local network (you should have it running) or setup a custom network in hardhat.config.ts and use `npm hardhat run --network "custom network" scripts/deploy.ts`.
 
 <p align="center" >
  <img width="500" src="img/deployment-log.PNG">

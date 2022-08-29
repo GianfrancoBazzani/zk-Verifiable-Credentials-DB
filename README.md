@@ -49,11 +49,11 @@ Issuer private key: "0d065b1a5dc3f5e336f20b51e7c0cca40bcffe17b64d9e01a0fa0a2188d
  <img width="500" src="img/circuit-settings.PNG">
 </p>
 
-3. Set same TREE_DEPTH in the credentialDB.sol.
+3. Set same TREE_DEPTH in the credentialsDB.sol.
 
 4. Compile circuit using `yarn compilecircuit` or running `scripts/compile-circuit.sh` script. Here we can modify the script to select the Ptau file if the compilation of the circuit has to many constrait.
 
-5. Run bump solidity script using `yarn bumpsolidityverifier` or `node scripts/compile-circuit.sh`
+5. Run bump solidity script using `yarn bumpsolidityverifier` or `node scripts/compile-circuit.sh`.
 
 6. Now you have to deploy the contracts, use `yarn deploy` to deploy it in the hardhat local network (you should have it running) or setup a custom network in hardhat.config.ts and use `npm hardhat run --network "custom network" scripts/deploy.ts`.
 
@@ -61,7 +61,7 @@ Issuer private key: "0d065b1a5dc3f5e336f20b51e7c0cca40bcffe17b64d9e01a0fa0a2188d
  <img width="500" src="img/deployment-log.PNG">
 </p>
 
-7. Now you have to take the Contracct address, shown in the deployment log and set it in page/index.tsx file, and build and deploy de front end using `yarn deployfront`
+7. Now you have to take the Contracct address, shown in the deployment log and set it in page/index.tsx file, and build and deploy de front end using `yarn deployfront`.
 
 <p align="center" >
  <img width="500" src="img/set-credentials-db-add.PNG">

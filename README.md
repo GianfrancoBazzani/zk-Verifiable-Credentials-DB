@@ -1,6 +1,6 @@
 # zk-Verifiable-Credentials-DB
 
-A credentials database encrypted and stored on chain with zk mecanics.
+A credentials database encrypted and stored on chain.
 
 This tool allows to an issuer to create a database to store credentials issued over subjects, and have these credentials always accessible and
 untampered thanks to immutable proprieties of the blockchain. Also, a zk verification is implemented to allow the subjects proof they credentials with selective disclosure of inner claims. This project assumes that subjects are in possession of eth EOA used as a Self-sovereign identity ID.

@@ -47,7 +47,7 @@ Another component of the system is the frontend app. Through the app we can inte
 
 ### Test instance
 
-You can check an instance of the app deployed in harmony devnet for test proposes.
+You can check an instance of the app deployed in harmony devnet for test purposes.
 
 Frontend: [https://zk-verifiable-credentials.surge.sh/](https://zk-verifiable-credentials.surge.sh/)
 

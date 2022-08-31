@@ -63,7 +63,7 @@ Issuer private key: "0d065b1a5dc3f5e336f20b51e7c0cca40bcffe17b64d9e01a0fa0a2188d
  <img width="500" src="img/credentials-schema.PNG">
 </p>
 
-2. Modify circuits/zkVerifiableCredentialsDBCore.circom, set "depth" and "claimsN" parameters. "depth" is the depth of the Merkle Tree, this value is related to the total credentials that can be issued (total credentials = 2^depth). If we set a deeper Merkle Tree, circom compilation will output more constraints and we will need a bigger Ptau file to build SNARK setup ([Check available Ptau files](https://github.com/iden3/snarkjs#7-prepare-phase-2)). The "clamisN" parameter has to correspond with the length of the claims array in the schema. Below an example where i set depth=16 and claimsN=5 is shown.
+2. Modify `circuits/zkVerifiableCredentialsDBCore.circom`, set "depth" and "claimsN" parameters. "depth" is the depth of the Merkle Tree, this value is related to the total credentials that can be issued (total credentials = 2^depth). If we set a deeper Merkle Tree, circom compilation will output more constraints and we will need a bigger Ptau file to build SNARK setup ([Check available Ptau files](https://github.com/iden3/snarkjs#7-prepare-phase-2)). The "clamisN" parameter has to correspond with the length of the claims array in the schema. Below an example where i set depth=16 and claimsN=5 is shown.
 
 <p align="center" >
  <img width="500" src="img/circuit-settings.PNG">

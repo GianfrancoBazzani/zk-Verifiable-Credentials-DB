@@ -6,7 +6,7 @@ include "./MerkleTreeInAlreadyHashed.circom";
 include "./../node_modules/circomlib/circuits/mux1.circom";
 
 template zkVerifiableCredentialsDBCore(depth, claimsN){
-    //n: numbers of cliams in the credential schema
+    //n: numbers of claims in the credential schema
     //Depth**2: numbers of leaves
     //Signals
     signal input ClaimsVals[claimsN];
